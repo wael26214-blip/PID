@@ -1,31 +1,24 @@
-import time
-
 class PIDController:
-    def __init__(self, kp, ki, kd, min_output, max_output):
+    def __init__(self,dt, kp, ki, kd, min_output, max_output):
+        self.dt = dt
         self.kp = kp
         self.ki = ki
         self.kd = kd
         self.min_output = min_output
         self.max_output = max_output
 
-        self.dt = 0.0
         self.deadzone = 0.0
         self.target = 0.0
         self.integral = 0.0
         self.previous_error = 0.0
-        self.previous_time = time.time()
 
     def set_active_target(self, target):
         self.target = target
         self.integral = 0.0
-        self.deadzone = abs(target) * 0.01
+        self.deadzone = abs(target) * 0.001
 
     def compute(self, current_state):
-        current_time = time.time()
-        self.dt = current_time - self.previous_time
-        
-        if self.dt <= 0.0:
-            self.dt = 1e-16
+
 
         error = self.target - current_state
 
@@ -48,7 +41,6 @@ class PIDController:
             output = self.min_output
 
         self.previous_error = error
-        self.previous_time = current_time
 
         return output
     
